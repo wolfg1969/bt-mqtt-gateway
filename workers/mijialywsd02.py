@@ -75,15 +75,6 @@ class Mijialywsd02Worker(BaseWorker):
 
         domoticz_idx = data.get('domoticz_idx')
         if domoticz_idx:
-          """
-          https://www.domoticz.com/wiki/Domoticz_API/JSON_URL%27s#Temperature.2Fhumidity
-          {
-            "command": "udevice",
-            "idx" : 7,
-            "nvalue" : 0,
-            "svalue" : "TEMP;HUM;HUM_STAT"
-          }
-          """
           ret.append(MqttMessage(topic=self.format_topic(), payload={
             "command": "udevice",
             "idx" : domoticz_idx,
