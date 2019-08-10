@@ -98,4 +98,9 @@ manager:
         state_topic_prefix: switchbot/bathroom
       topic_subscription: switchbot/+/+/set
       update_interval: 60
-
+    mijialywsd:
+      args:
+        mac: 00:11:22:33:44:55
+        domoticz_idx: 42  # Optional for homeassistant
+        # topic_prefix: mijia_lywsd  # Optional for domoticz
+      update_interval: 300
