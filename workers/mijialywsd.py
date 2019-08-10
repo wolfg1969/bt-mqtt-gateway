@@ -1,3 +1,4 @@
+import logging
 import time
 from interruptingcow import timeout
 
@@ -5,6 +6,7 @@ from mqtt import MqttMessage
 from workers.base import BaseWorker
 
 REQUIREMENTS = ['bluepy']
+_LOGGER = logger.get(__name__)
 
 
 # Bluepy might need special settings
@@ -12,7 +14,7 @@ REQUIREMENTS = ['bluepy']
 
 class MijialywsdWorker(BaseWorker):
 
-  SCAN_TIMEOUT = 5
+  SCAN_TIMEOUT = 60
 
   def status_update(self):
     return [MqttMessage(topic=self.format_topic(), payload=self._get_value())]
@@ -51,15 +53,20 @@ class ScanProcessor():
     self._mac = mac
     self._temp = None
     self._hum = None
+    self._data_mapping = {
+      '04': '_temp',
+      '06': '_hum',
+    }
 
-  def handleDiscovery(self, dev, isNewDev, _):
-    if dev.addr == self.mac.lower() and isNewDev:
+  def handleDiscovery(self, dev, isNewDev, isNewData):
+    if dev.addr == self.mac.lower():
       for (sdid, desc, data) in dev.getScanData():
-        print(sdid, desc, data)
-        # if data.startswith('1d18') and sdid == 22:
-          # measured = int((data[8:10] + data[6:8]), 16) * 0.01
-
-          # self._weight = round(measured / 2, 2)
+        if data.startswith('95fe') and sdid == 22:
+          _LOGGER.info('>>> Received Message: %s', data)
+          data_type = data[28:30]
+          measured = int(data[36:]+data[34:36], 16) * 0.1
+          if data_type in self._data_mapping:
+            setattr(self, self._data_mapping[data_type], round(measured, 2))
 
   @property
   def mac(self):
