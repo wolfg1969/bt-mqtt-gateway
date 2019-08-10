@@ -4,7 +4,7 @@ from interruptingcow import timeout
 
 from mqtt import MqttMessage
 from workers.base import BaseWorker
-from . import logger
+import logger
 
 REQUIREMENTS = ['bluepy']
 _LOGGER = logger.get(__name__)
