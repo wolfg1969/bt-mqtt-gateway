@@ -60,10 +60,11 @@ class ScanProcessor():
     }
 
   def handleDiscovery(self, dev, isNewDev, isNewData):
+    _LOGGER.debug('>>> handleDiscovery: %s, %s, %s', dev, isNewDev, isNewData)
     if dev.addr == self.mac.lower():
       for (sdid, desc, data) in dev.getScanData():
         if data.startswith('95fe') and sdid == 22:
-          _LOGGER.info('>>> Received Message: %s', data)
+          _LOGGER.debug('>>> Received Message: %s', data)
           data_type = data[28:30]
           measured = int(data[36:]+data[34:36], 16) * 0.1
           if data_type in self._data_mapping:
